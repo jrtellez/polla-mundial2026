@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polla Mundial 2026 · Waka Waka</title>
+<style>
+  :root{
+    --verde:#0a7d3b; --verde2:#0c9447; --oro:#f4c430; --tinta:#10241a;
+    --gris:#f4f6f5; --linea:#e2e8e4; --rojo:#d64545; --azul:#2b6cb0;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       color:var(--tinta);background:var(--gris);font-size:15px;line-height:1.45}
+  header{background:linear-gradient(120deg,var(--verde),var(--verde2));color:#fff;padding:22px 18px;
+         box-shadow:0 2px 10px rgba(0,0,0,.15)}
+  header h1{margin:0;font-size:1.5rem;letter-spacing:.3px}
+  header h1 .ball{color:var(--oro)}
+  header p{margin:6px 0 0;opacity:.92;font-size:.9rem}
+  .wrap{max-width:1180px;margin:0 auto;padding:18px}
+  .panel{background:#fff;border:1px solid var(--linea);border-radius:12px;padding:16px;margin-bottom:16px;
+         box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .panel h2{margin:0 0 12px;font-size:1.05rem;color:var(--verde)}
+  .row{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center}
+  .fld{display:flex;flex-direction:column;gap:3px}
+  .fld label{font-size:.72rem;text-transform:uppercase;letter-spacing:.4px;color:#5c6b62}
+  .fld input[type=number]{width:74px;padding:6px 8px;border:1px solid var(--linea);border-radius:7px;font-size:.95rem}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{display:inline-flex;align-items:center;gap:6px;background:var(--gris);border:1px solid var(--linea);
+        padding:6px 11px;border-radius:20px;font-size:.84rem;cursor:pointer;user-select:none}
+  .chip input{accent-color:var(--verde)}
+  .stat{display:flex;gap:26px;flex-wrap:wrap}
+  .stat .big{font-size:1.7rem;font-weight:700;color:var(--verde)}
+  .stat .lbl{font-size:.72rem;text-transform:uppercase;color:#5c6b62;letter-spacing:.4px}
+  table{width:100%;border-collapse:collapse;font-size:.88rem}
+  th,td{padding:8px 9px;text-align:center;border-bottom:1px solid var(--linea);white-space:nowrap}
+  th{background:var(--verde);color:#fff;font-weight:600;font-size:.74rem;text-transform:uppercase;letter-spacing:.3px;
+     position:sticky;top:0;z-index:2}
+  td.match{text-align:left;font-weight:600;min-width:210px}
+  td.dia{color:#5c6b62;font-size:.78rem}
+  .pron{font-weight:800;font-size:1.05rem;color:var(--tinta)}
+  tr.seguro{background:rgba(10,125,59,.06)}
+  tr.incierto{background:rgba(214,69,69,.06)}
+  .tag{display:inline-block;padding:1px 7px;border-radius:10px;font-size:.7rem;font-weight:700;color:#fff}
+  .t-seg{background:var(--verde)} .t-inc{background:var(--rojo)} .t-med{background:#a08a1e}
+  .bar{height:7px;border-radius:4px;background:var(--linea);overflow:hidden;display:flex;min-width:90px}
+  .bar i{display:block;height:100%}
+  .b1{background:var(--verde)} .bx{background:#c9a227} .b2{background:var(--azul)}
+  .mini{width:42px;padding:4px;border:1px solid var(--linea);border-radius:6px;text-align:center;font-size:.85rem}
+  .odds input{width:46px}
+  .note{font-size:.78rem;color:#5c6b62}
+  .pts-cell{font-weight:800}
+  details{margin-top:6px}
+  summary{cursor:pointer;color:var(--verde);font-size:.85rem;font-weight:600}
+  .foot{font-size:.78rem;color:#5c6b62;text-align:center;padding:10px 0 30px}
+  .toggleview{display:flex;gap:14px;flex-wrap:wrap;margin-top:4px}
+  .hidecol{display:none}
+  .legend{font-size:.78rem;color:#5c6b62;margin-top:8px}
+  .legend b{color:var(--tinta)}
+  button.act{background:var(--verde);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:.85rem;cursor:pointer}
+  button.act:hover{background:var(--verde2)}
+  .pill{background:var(--oro);color:var(--tinta);font-weight:700;border-radius:8px;padding:2px 8px;font-size:.8rem}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap" style="padding-bottom:0">
+    <h1><span class="ball">⚽</span> Polla Mundial 2026 · <span style="color:var(--oro)">Waka Waka</span></h1>
+    <p>Modelo Poisson multivariable — optimiza los <b>puntos esperados</b> de tu polla. Corre 100% en tu navegador.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="panel">
+    <h2>⚙️ Reglas de puntuación</h2>
+    <div class="row">
+      <div class="fld"><label>Ganador / empate</label><input type="number" id="ptsGan" value="5" min="0"></div>
+      <div class="fld"><label>Goles de cada equipo</label><input type="number" id="ptsGol" value="2" min="0"></div>
+      <div class="fld"><label>Diferencia de goles</label><input type="number" id="ptsDif" value="1" min="0"></div>
+      <label class="chip"><input type="checkbox" id="segRonda"> Segunda ronda (×2)</label>
+      <span class="note">Máximo por partido: <span id="maxPts">10</span> pts</span>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>🔬 Variables del modelo <span class="note">(actívalas/desactívalas para ver su efecto)</span></h2>
+    <div class="chips" id="toggles">
+      <label class="chip"><input type="checkbox" data-cfg="valor" checked> Valor de mercado</label>
+      <label class="chip"><input type="checkbox" data-cfg="top" checked> Jugadores top</label>
+      <label class="chip"><input type="checkbox" data-cfg="edad" checked> Edad/experiencia</label>
+      <label class="chip"><input type="checkbox" data-cfg="confed" checked> Confederación</label>
+      <label class="chip"><input type="checkbox" data-cfg="localia" checked> Localía anfitriona</label>
+      <label class="chip"><input type="checkbox" data-cfg="publico" checked> Público / diáspora</label>
+      <label class="chip"><input type="checkbox" data-cfg="altitud" checked> Altitud</label>
+      <label class="chip"><input type="checkbox" data-cfg="calor" checked> Calor</label>
+      <label class="chip"><input type="checkbox" data-cfg="husos" checked> Husos horarios</label>
+    </div>
+    <div class="toggleview">
+      <label class="chip"><input type="checkbox" id="verCuotas"> Mostrar entrada de cuotas</label>
+      <label class="chip"><input type="checkbox" id="verResultados"> Mostrar resultados / validación</label>
+      <button class="act" id="reset">↺ Borrar mis datos guardados</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>📊 Resumen</h2>
+    <div class="stat">
+      <div><div class="big" id="sTotal">—</div><div class="lbl">Puntos esperados (de <span id="sMax">240</span>)</div></div>
+      <div><div class="big" id="sProm">—</div><div class="lbl">Promedio / partido</div></div>
+      <div><div class="big" id="sReal">—</div><div class="lbl">Puntos reales logrados</div></div>
+      <div><div class="big" id="sBrier">—</div><div class="lbl">Brier 1X2 (↓ mejor)</div></div>
+    </div>
+    <div id="validPanel" class="legend"></div>
+  </div>
+
+  <div class="panel" style="overflow-x:auto">
+    <h2>📋 Pronósticos · Fecha 1</h2>
+    <table id="tabla">
+      <thead><tr>
+        <th>Día</th><th>Gr</th><th class="match">Partido</th>
+        <th>Goles esp.</th><th>1 · X · 2</th><th>Prob</th><th>Modal</th>
+        <th>Pronóstico</th><th>PE</th>
+        <th class="col-cuotas hidecol">Cuotas (1/X/2)</th>
+        <th class="col-res hidecol">Resultado</th><th class="col-res hidecol">Pts</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+    <div class="legend">
+      <span class="tag t-seg">SEGURO</span> alto valor esperado &nbsp;·&nbsp;
+      <span class="tag t-inc">INCIERTO</span> favorito &lt;45% (candidato a arriesgar si vas atrás) &nbsp;·&nbsp;
+      <b>PE</b>=puntos esperados. El pronóstico maximiza la suma de los 4 componentes de tu polla.
+    </div>
+  </div>
+
+  <div class="foot">
+    Modelo: Elo + valor de mercado + jugadores top + edad + confederación + localía + público/diáspora + altitud + calor + husos (+ cuotas).<br>
+    Variables ancladas en literatura (Groll &amp; Schauberger 2018, Peeters 2018, experimento "ghost games" COVID). Tus datos se guardan solo en este navegador.
+  </div>
+</div>
+
+<script>
+/* ====================== PARÁMETROS DEL MODELO ====================== */
+const P = {
+  GOLES_BASE:2.45, ELO_POR_GOL:200, EXTRA_TOT_MISMATCH:0.10, MAX_GOLES:8,
+  PESO_VALOR:0.25, TOP_POR_JUGADOR:4.0, EDAD_PICO:27, EDAD_K:1.2,
+  CONF_ADJ:{UEFA:0,CONMEBOL:0,CONCACAF:-8,CAF:-10,AFC:-15,OFC:-25},
+  HOME_ADV:70, ALT_UMBRAL:1000, ALT_K:4.0, CALOR_PENAL:18,
+  HUSO_K:2.0, HUSO_F1:0.3, HUSO_MAX:12,
+  APOYO_MAX:35, LATINO_BONUS_MX:0.25, AFIN_DEF:0.40
+};
+const ALTITUD_OK=new Set(["México","Colombia","Ecuador","Bolivia","Perú"]);
+const CLIMA_FRIO=new Set(["Noruega","Suecia","Inglaterra","Escocia","Países Bajos","Alemania","Bélgica","Suiza","Austria","Croacia","Chequia","Bosnia","Canadá","Dinamarca","Irlanda"]);
+const ANFITRIONAS=new Set(["México","Estados Unidos","Canadá"]);
+const LATINO=new Set(["México","Argentina","Brasil","Colombia","Ecuador","Uruguay","Paraguay","Panamá","España"]);
+
+/* ====================== DATOS POR SELECCIÓN ======================
+   elo, valor(€M), top(jugadores élite), edad, conf, tz(UTC casa), afin(0..1) */
+const E = {
+ "España":{elo:2155,valor:1260,top:19,edad:26.5,conf:"UEFA",tz:2,afin:0.65},
+ "Argentina":{elo:2114,valor:818,top:9,edad:28.5,conf:"CONMEBOL",tz:-3,afin:0.95},
+ "Francia":{elo:2062,valor:1530,top:18,edad:26.5,conf:"UEFA",tz:2,afin:0.40},
+ "Inglaterra":{elo:2021,valor:1310,top:16,edad:26.0,conf:"UEFA",tz:1,afin:0.65},
+ "Brasil":{elo:1991,valor:912,top:13,edad:27.0,conf:"CONMEBOL",tz:-3,afin:0.90},
+ "Portugal":{elo:1986,valor:1020,top:13,edad:27.5,conf:"UEFA",tz:1,afin:0.70},
+ "Colombia":{elo:1982,valor:360,top:5,edad:27.5,conf:"CONMEBOL",tz:-5,afin:0.90},
+ "Países Bajos":{elo:1948,valor:837,top:11,edad:27.0,conf:"UEFA",tz:2,afin:0.55},
+ "Alemania":{elo:1932,valor:998,top:14,edad:26.5,conf:"UEFA",tz:2,afin:0.60},
+ "Croacia":{elo:1911,valor:330,top:8,edad:28.5,conf:"UEFA",tz:2,afin:0.55},
+ "Japón":{elo:1906,valor:280,top:4,edad:27.0,conf:"AFC",tz:9,afin:0.42},
+ "Bélgica":{elo:1898,valor:470,top:8,edad:27.0,conf:"UEFA",tz:2,afin:0.48},
+ "Uruguay":{elo:1888,valor:420,top:7,edad:27.5,conf:"CONMEBOL",tz:-3,afin:0.75},
+ "Marruecos":{elo:1860,valor:360,top:7,edad:27.0,conf:"CAF",tz:1,afin:0.50},
+ "México":{elo:1838,valor:220,top:2,edad:27.5,conf:"CONCACAF",tz:-6,afin:1.00},
+ "Ecuador":{elo:1828,valor:320,top:4,edad:26.0,conf:"CONMEBOL",tz:-5,afin:0.80},
+ "Suiza":{elo:1828,valor:300,top:5,edad:27.5,conf:"UEFA",tz:2,afin:0.45},
+ "Senegal":{elo:1820,valor:320,top:6,edad:27.0,conf:"CAF",tz:0,afin:0.45},
+ "Noruega":{elo:1808,valor:520,top:6,edad:26.0,conf:"UEFA",tz:2,afin:0.45},
+ "Turquía":{elo:1796,valor:380,top:6,edad:27.0,conf:"UEFA",tz:3,afin:0.55},
+ "Estados Unidos":{elo:1798,valor:320,top:5,edad:26.0,conf:"CONCACAF",tz:-5,afin:0.95},
+ "Corea del Sur":{elo:1790,valor:180,top:3,edad:27.5,conf:"AFC",tz:9,afin:0.50},
+ "Irán":{elo:1788,valor:70,top:0,edad:28.0,conf:"AFC",tz:3,afin:0.55},
+ "Canadá":{elo:1788,valor:200,top:4,edad:26.5,conf:"CONCACAF",tz:-5,afin:0.80},
+ "Austria":{elo:1785,valor:320,top:6,edad:27.0,conf:"UEFA",tz:2,afin:0.40},
+ "Argelia":{elo:1778,valor:220,top:3,edad:27.5,conf:"CAF",tz:1,afin:0.45},
+ "Suecia":{elo:1772,valor:300,top:4,edad:26.5,conf:"UEFA",tz:2,afin:0.45},
+ "Chequia":{elo:1768,valor:200,top:3,edad:27.0,conf:"UEFA",tz:2,afin:0.40},
+ "Egipto":{elo:1762,valor:160,top:2,edad:28.0,conf:"CAF",tz:2,afin:0.40},
+ "Costa de Marfil":{elo:1760,valor:260,top:4,edad:26.5,conf:"CAF",tz:0,afin:0.40},
+ "Escocia":{elo:1758,valor:220,top:3,edad:27.5,conf:"UEFA",tz:1,afin:0.50},
+ "Bosnia":{elo:1722,valor:130,top:2,edad:27.5,conf:"UEFA",tz:2,afin:0.45},
+ "Paraguay":{elo:1722,valor:90,top:1,edad:27.0,conf:"CONMEBOL",tz:-4,afin:0.70},
+ "Australia":{elo:1720,valor:60,top:1,edad:27.5,conf:"AFC",tz:10,afin:0.35},
+ "RD Congo":{elo:1718,valor:180,top:3,edad:26.5,conf:"CAF",tz:1,afin:0.35},
+ "Ghana":{elo:1715,valor:200,top:3,edad:26.0,conf:"CAF",tz:0,afin:0.45},
+ "Sudáfrica":{elo:1700,valor:55,top:0,edad:26.5,conf:"CAF",tz:2,afin:0.32},
+ "Túnez":{elo:1700,valor:70,top:1,edad:27.5,conf:"CAF",tz:1,afin:0.38},
+ "Catar":{elo:1688,valor:35,top:0,edad:28.0,conf:"AFC",tz:3,afin:0.22},
+ "Panamá":{elo:1650,valor:30,top:0,edad:28.0,conf:"CONCACAF",tz:-5,afin:0.45},
+ "Arabia Saudí":{elo:1640,valor:40,top:0,edad:28.0,conf:"AFC",tz:3,afin:0.25},
+ "Uzbekistán":{elo:1635,valor:45,top:1,edad:26.0,conf:"AFC",tz:5,afin:0.20},
+ "Cabo Verde":{elo:1628,valor:55,top:1,edad:27.0,conf:"CAF",tz:-1,afin:0.50},
+ "Irak":{elo:1605,valor:25,top:0,edad:26.5,conf:"AFC",tz:3,afin:0.30},
+ "Jordania":{elo:1592,valor:18,top:0,edad:27.5,conf:"AFC",tz:3,afin:0.25},
+ "Curazao":{elo:1568,valor:35,top:0,edad:28.0,conf:"CONCACAF",tz:-4,afin:0.40},
+ "Nueva Zelanda":{elo:1560,valor:35,top:0,edad:27.0,conf:"OFC",tz:12,afin:0.30},
+ "Haití":{elo:1558,valor:25,top:0,edad:26.5,conf:"CONCACAF",tz:-5,afin:0.60}
+};
+
+/* ====================== CALENDARIO FECHA 1 ====================== */
+const FIX = [
+ ["A","11 jun","México","Sudáfrica","Ciudad de México","México",2240,false,-6],
+ ["A","11 jun","Corea del Sur","Chequia","Guadalajara","México",1560,false,-6],
+ ["B","12 jun","Canadá","Bosnia","Toronto","Canadá",76,false,-4],
+ ["D","12 jun","Estados Unidos","Paraguay","Inglewood","Estados Unidos",30,false,-7],
+ ["B","13 jun","Catar","Suiza","Santa Clara","Estados Unidos",12,false,-7],
+ ["C","13 jun","Brasil","Marruecos","Nueva Jersey","Estados Unidos",7,false,-4],
+ ["C","13 jun","Haití","Escocia","Foxborough","Estados Unidos",46,false,-4],
+ ["D","14 jun","Australia","Turquía","Vancouver","Canadá",3,false,-7],
+ ["E","14 jun","Alemania","Curazao","Houston","Estados Unidos",15,false,-5],
+ ["E","14 jun","Costa de Marfil","Ecuador","Filadelfia","Estados Unidos",12,true,-4],
+ ["F","14 jun","Países Bajos","Japón","Arlington","Estados Unidos",150,false,-5],
+ ["F","14 jun","Suecia","Túnez","Monterrey","México",540,true,-6],
+ ["G","15 jun","Bélgica","Egipto","Seattle","Estados Unidos",34,false,-7],
+ ["G","15 jun","Irán","Nueva Zelanda","Inglewood","Estados Unidos",30,false,-7],
+ ["H","15 jun","España","Cabo Verde","Atlanta","Estados Unidos",320,false,-4],
+ ["H","15 jun","Arabia Saudí","Uruguay","Miami","Estados Unidos",2,true,-4],
+ ["I","16 jun","Francia","Senegal","Nueva Jersey","Estados Unidos",7,false,-4],
+ ["I","16 jun","Irak","Noruega","Foxborough","Estados Unidos",46,false,-4],
+ ["J","16 jun","Argentina","Argelia","Kansas City","Estados Unidos",271,true,-5],
+ ["J","17 jun","Austria","Jordania","Santa Clara","Estados Unidos",12,false,-7],
+ ["K","17 jun","Portugal","RD Congo","Houston","Estados Unidos",15,false,-5],
+ ["K","17 jun","Uzbekistán","Colombia","Ciudad de México","México",2240,false,-6],
+ ["L","17 jun","Inglaterra","Croacia","Arlington","Estados Unidos",150,false,-5],
+ ["L","17 jun","Ghana","Panamá","Toronto","Canadá",76,false,-4]
+];
+
+/* ====================== ESTADO (con persistencia) ====================== */
+function load(k,def){try{const v=JSON.parse(localStorage.getItem(k));return v??def;}catch(e){return def;}}
+function save(k,v){localStorage.setItem(k,JSON.stringify(v));}
+const cfg = load('polla_cfg',{valor:1,top:1,edad:1,confed:1,localia:1,publico:1,altitud:1,calor:1,husos:1});
+const reglas = load('polla_reglas',{gan:5,gol:2,dif:1,seg:false});
+let ODDS = load('polla_odds',{"México|Sudáfrica":[1.45,5.5,8.0]});
+let RES  = load('polla_res',{});
+
+/* ====================== MATEMÁTICA ====================== */
+function fact(n){let r=1;for(let i=2;i<=n;i++)r*=i;return r;}
+function poisson(k,l){return Math.exp(-l)*Math.pow(l,k)/fact(k);}
+
+// regresión Elo ~ a + b*log(valor) (tirón hacia valor de mercado)
+let A_,B_,TOPM;
+(function ols(){
+  const xs=[],ys=[]; for(const t in E){xs.push(Math.log(E[t].valor));ys.push(E[t].elo);}
+  const n=xs.length, mx=xs.reduce((a,b)=>a+b)/n, my=ys.reduce((a,b)=>a+b)/n;
+  let sxx=0,sxy=0; for(let i=0;i<n;i++){sxx+=(xs[i]-mx)**2; sxy+=(xs[i]-mx)*(ys[i]-my);}
+  B_=sxy/sxx; A_=my-B_*mx;
+  let s=0; for(const t in E)s+=E[t].top; TOPM=s/n;
+})();
+
+function habilidadBase(t){
+  const d=E[t]; let base=d.elo;
+  if(cfg.valor){const ev=A_+B_*Math.log(d.valor); base=(1-P.PESO_VALOR)*d.elo+P.PESO_VALOR*ev;}
+  if(cfg.top) base+=P.TOP_POR_JUGADOR*(d.top-TOPM);
+  if(cfg.edad) base-=P.EDAD_K*(d.edad-P.EDAD_PICO)**2;
+  if(cfg.confed) base+=(P.CONF_ADJ[d.conf]||0);
+  return base;
+}
+function afinEf(t,pais){let a=E[t].afin??P.AFIN_DEF; if(pais==="México"&&LATINO.has(t))a+=P.LATINO_BONUS_MX; return Math.min(1,a);}
+function leanPublico(loc,vis,pais){
+  if(!cfg.publico) return [0,null];
+  const host=(ANFITRIONAS.has(loc)&&pais===loc)||(ANFITRIONAS.has(vis)&&pais===vis);
+  if(host) return [0,null];
+  const L=P.APOYO_MAX*(afinEf(loc,pais)-afinEf(vis,pais));
+  let nota=null; if(Math.abs(L)>=6){const f=(L>0?loc:vis); nota="público→"+f.split(" ")[0];}
+  return [L,nota];
+}
+function habEnPartido(t,fx,esLocal){
+  const [,,loc,vis,ciu,pais,alt,calor,tzs]=fx;
+  let e=habilidadBase(t); const notas=[];
+  if(cfg.localia && esLocal && ANFITRIONAS.has(t) && pais===t){e+=P.HOME_ADV; notas.push("local");}
+  if(cfg.altitud && alt>P.ALT_UMBRAL && !ALTITUD_OK.has(t)){e-=(alt-P.ALT_UMBRAL)/100*P.ALT_K; notas.push("altura-"+alt+"m");}
+  if(cfg.calor && calor && CLIMA_FRIO.has(t)){e-=P.CALOR_PENAL; notas.push("calor");}
+  if(cfg.husos){const h=Math.min(P.HUSO_MAX,Math.abs(E[t].tz-tzs)); if(h>0){e-=h*P.HUSO_K*P.HUSO_F1; if(h>=6)notas.push("jet-lag"+h+"h");}}
+  return [e,notas];
+}
+function lambdas(fx){
+  const loc=fx[2],vis=fx[3],pais=fx[5];
+  let [el,nl]=habEnPartido(loc,fx,true);
+  let [ev,nv]=habEnPartido(vis,fx,false);
+  const [L,np]=leanPublico(loc,vis,pais); el+=L; if(np)nl=nl.concat([np]);
+  const sup=(el-ev)/P.ELO_POR_GOL, tot=P.GOLES_BASE+P.EXTRA_TOT_MISMATCH*Math.abs(sup);
+  let ll=Math.max(0.12,(tot+sup)/2), lv=Math.max(0.12,(tot-sup)/2);
+  const key=loc+"|"+vis;
+  if(ODDS[key]){[ll,lv]=blendOdds(ll,lv,ODDS[key]); nl=nl.concat(["odds"]);}
+  return [ll,lv,nl,nv];
+}
+function probs(ll,lv){let p1=0,px=0,p2=0;for(let i=0;i<=P.MAX_GOLES;i++){const pi=poisson(i,ll);for(let j=0;j<=P.MAX_GOLES;j++){const p=pi*poisson(j,lv);if(i>j)p1+=p;else if(i===j)px+=p;else p2+=p;}}return[p1,px,p2];}
+function blendOdds(ll,lv,c){
+  const inv=[1/c[0],1/c[1],1/c[2]],s=inv[0]+inv[1]+inv[2];
+  const q=[inv[0]/s,inv[1]/s,inv[2]/s]; let best=1e9,bl=ll,bv=lv; const t0=ll+lv;
+  for(let tot=Math.max(1.6,t0-0.8);tot<=t0+0.8+1e-9;tot+=0.1)
+   for(let sup=-3;sup<=3+1e-9;sup+=0.1){
+     const lh=Math.max(.08,(tot+sup)/2),la=Math.max(.08,(tot-sup)/2),[p1,px,p2]=probs(lh,la);
+     const err=(p1-q[0])**2+(px-q[1])**2+(p2-q[2])**2; if(err<best){best=err;bl=lh;bv=la;}
+   }
+  const W=0.5; return [(1-W)*ll+W*bl,(1-W)*lv+W*bv];
+}
+function marginal(l){const a=[];for(let k=0;k<=P.MAX_GOLES;k++)a.push(poisson(k,l));return a;}
+function difs(ll,lv){const d={};for(let i=0;i<=P.MAX_GOLES;i++)for(let j=0;j<=P.MAX_GOLES;j++){const k=i-j;d[k]=(d[k]||0)+poisson(i,ll)*poisson(j,lv);}return d;}
+function modal(ll,lv){let b=0,ba=0,bb=0;for(let i=0;i<=P.MAX_GOLES;i++)for(let j=0;j<=P.MAX_GOLES;j++){const p=poisson(i,ll)*poisson(j,lv);if(p>b){b=p;ba=i;bb=j;}}return[ba,bb];}
+function epMarcador(a,b,p1,px,p2,ph,pv,pd){
+  const ps=a>b?p1:(a===b?px:p2);
+  const eg=reglas.gan*ps, eh=reglas.gol*ph[a], ea=reglas.gol*pv[b], ed=reglas.dif*((pd[a-b])||0);
+  const m=reglas.seg?2:1; return [(eg+eh+ea+ed)*m,[eg*m,eh*m,ea*m,ed*m]];
+}
+function optimo(p1,px,p2,ph,pv,pd){let best=null;for(let a=0;a<=P.MAX_GOLES;a++)for(let b=0;b<=P.MAX_GOLES;b++){const[t,dg]=epMarcador(a,b,p1,px,p2,ph,pv,pd);if(!best||t>best.ep){best={a,b,ep:t,dg};}}return best;}
+function s3(a,b){return (a>b)-(a<b);}
+function puntosReales(pa,pb,gl,gv){
+  const m=reglas.seg?2:1; let pts=0;
+  if(s3(pa,pb)===s3(gl,gv))pts+=reglas.gan;
+  if(pa===gl)pts+=reglas.gol; if(pb===gv)pts+=reglas.gol;
+  if((pa-pb)===(gl-gv))pts+=reglas.dif;
+  return pts*m;
+}
+function predecir(fx){
+  const [ll,lv,nl,nv]=lambdas(fx);const[p1,px,p2]=probs(ll,lv);
+  const ph=marginal(ll),pv=marginal(lv),pd=difs(ll,lv),[ma,mb]=modal(ll,lv);
+  const o=optimo(p1,px,p2,ph,pv,pd);
+  return {ll,lv,nl,nv,p1,px,p2,ma,mb,...o};
+}
+
+/* ====================== RENDER ====================== */
+function dnum(x){return x.toFixed(2);}
+function pct(x){return (x*100).toFixed(0)+"%";}
+function maxProb(p1,px,p2){return Math.max(p1,px,p2);}
+
+function render(){
+  // reglas
+  reglas.gan=+ptsGan.value; reglas.gol=+ptsGol.value; reglas.dif=+ptsDif.value; reglas.seg=segRonda.checked;
+  save('polla_reglas',reglas);
+  const m=reglas.seg?2:1; const maxP=(reglas.gan+2*reglas.gol+reglas.dif)*m;
+  maxPts.textContent=maxP; sMax.textContent=maxP*FIX.length;
+
+  const fix=[...FIX].sort((a,b)=>parseInt(a[1])-parseInt(b[1]));
+  const tbody=document.querySelector('#tabla tbody'); tbody.innerHTML='';
+  let totalEP=0, totalReal=0, brier=0, nval=0, signoOK=0;
+  let diaPrev='';
+  for(const fx of fix){
+    const [gr,dia,loc,vis,ciu,pais]=fx;
+    const r=predecir(fx); totalEP+=r.ep;
+    const mp=maxProb(r.p1,r.p2,r.px);
+    let cls='', tag='';
+    if(r.ep>=5.4){cls='seguro';tag='<span class="tag t-seg">SEGURO</span>';}
+    else if(mp<0.45){cls='incierto';tag='<span class="tag t-inc">INCIERTO</span>';}
+    const w1=Math.round(r.p1*100),wx=Math.round(r.px*100),w2=Math.round(r.p2*100);
+    const key=loc+"|"+vis;
+    const oc=ODDS[key]||["","",""];
+    const res=RES[key];
+    let ptsCell='—';
+    if(res){const pr=puntosReales(r.a,r.b,res[0],res[1]); ptsCell='<b class="pts-cell">'+pr+'</b>';
+      totalReal+=pr; nval++; if(s3(r.a,r.b)===s3(res[0],res[1]))signoOK++;
+      const out=[res[0]>res[1]?1:0,res[0]===res[1]?1:0,res[0]<res[1]?1:0];
+      brier+=(r.p1-out[0])**2+(r.px-out[1])**2+(r.p2-out[2])**2;}
+    const tr=document.createElement('tr'); tr.className=cls;
+    tr.innerHTML=`
+      <td class="dia">${dia}</td><td>${gr}</td>
+      <td class="match">${loc} <span class="note">vs</span> ${vis}<br>
+          <span class="note">${ciu}</span> ${tag} ${r.nl.concat(r.nv).filter(Boolean).length?'<span class="note">· '+r.nl.concat(r.nv).join(', ')+'</span>':''}</td>
+      <td>${dnum(r.ll)} - ${dnum(r.lv)}</td>
+      <td><div class="bar"><i class="b1" style="width:${w1}%"></i><i class="bx" style="width:${wx}%"></i><i class="b2" style="width:${w2}%"></i></div></td>
+      <td class="note">${w1}/${wx}/${w2}</td>
+      <td>${r.ma}-${r.mb}</td>
+      <td class="pron">${r.a}-${r.b}</td>
+      <td>${dnum(r.ep)}</td>
+      <td class="col-cuotas hidecol odds">
+        <input class="mini" data-odds="${key}" data-i="0" value="${oc[0]}" placeholder="1">
+        <input class="mini" data-odds="${key}" data-i="1" value="${oc[1]}" placeholder="X">
+        <input class="mini" data-odds="${key}" data-i="2" value="${oc[2]}" placeholder="2"></td>
+      <td class="col-res hidecol">
+        <input class="mini" data-res="${key}" data-i="0" value="${res?res[0]:''}" placeholder="${loc.slice(0,3)}">
+        <input class="mini" data-res="${key}" data-i="1" value="${res?res[1]:''}" placeholder="${vis.slice(0,3)}"></td>
+      <td class="col-res hidecol">${ptsCell}</td>`;
+    tbody.appendChild(tr);
+  }
+  sTotal.textContent=dnum(totalEP); sProm.textContent=dnum(totalEP/FIX.length);
+  sReal.textContent= nval? totalReal : '—';
+  sBrier.textContent= nval? (brier/nval).toFixed(3) : '—';
+  // panel validación
+  if(nval){
+    let tp=0,tr=0,dp=0,dr=0;
+    for(const fx of FIX){const k=fx[2]+"|"+fx[3]; if(RES[k]){const r=predecir(fx);tp+=r.ll+r.lv;tr+=RES[k][0]+RES[k][1];dp+=r.px;dr+=(RES[k][0]===RES[k][1]?1:0);}}
+    validPanel.innerHTML=`Validados <b>${nval}</b> · acierto de signo <b>${Math.round(signoOK/nval*100)}%</b> · `+
+      `goles/partido predichos <b>${(tp/nval).toFixed(2)}</b> vs reales <b>${(tr/nval).toFixed(2)}</b> · `+
+      `empates esperados <b>${Math.round(dp/nval*100)}%</b> vs reales <b>${Math.round(dr/nval*100)}%</b>`+
+      ( Math.abs(tr/nval-tp/nval)>=0.25 ? ` — <span class="pill">sugerencia: ${tr>tp?'subir':'bajar'} GOLES_BASE</span>`:'' );
+  } else validPanel.innerHTML='Ingresa resultados reales (activa "Mostrar resultados") para validar el modelo.';
+  attachInputs();
+  applyColViz();
+}
+
+function attachInputs(){
+  document.querySelectorAll('input[data-odds]').forEach(inp=>inp.onchange=e=>{
+    const k=e.target.dataset.odds,i=+e.target.dataset.i; const cur=ODDS[k]||["","",""];
+    cur[i]=e.target.value; if(cur.every(x=>x!=="")&&cur.every(x=>+x>1)) ODDS[k]=cur.map(Number); else if(cur.every(x=>x==="")) delete ODDS[k]; else ODDS[k]=cur;
+    save('polla_odds',ODDS); render();
+  });
+  document.querySelectorAll('input[data-res]').forEach(inp=>inp.onchange=e=>{
+    const k=e.target.dataset.res,i=+e.target.dataset.i; const cur=RES[k]||["",""];
+    cur[i]=e.target.value;
+    if(cur[0]!==""&&cur[1]!=="") RES[k]=[parseInt(cur[0]),parseInt(cur[1])]; else if(cur[0]===""&&cur[1]==="") delete RES[k]; else RES[k]=cur;
+    save('polla_res',RES); render();
+  });
+}
+function applyColViz(){
+  const c=verCuotas.checked,r=verResultados.checked;
+  document.querySelectorAll('.col-cuotas').forEach(el=>el.classList.toggle('hidecol',!c));
+  document.querySelectorAll('.col-res').forEach(el=>el.classList.toggle('hidecol',!r));
+}
+
+/* ====================== EVENTOS ====================== */
+['ptsGan','ptsGol','ptsDif'].forEach(id=>document.getElementById(id).addEventListener('input',render));
+segRonda.addEventListener('change',render);
+document.querySelectorAll('#toggles input[data-cfg]').forEach(c=>{
+  c.checked=!!cfg[c.dataset.cfg];
+  c.addEventListener('change',()=>{cfg[c.dataset.cfg]=c.checked?1:0;save('polla_cfg',cfg);render();});
+});
+verCuotas.addEventListener('change',applyColViz);
+verResultados.addEventListener('change',applyColViz);
+document.getElementById('reset').addEventListener('click',()=>{
+  if(confirm('¿Borrar cuotas, resultados y ajustes guardados en este navegador?')){
+    ['polla_odds','polla_res','polla_cfg','polla_reglas'].forEach(k=>localStorage.removeItem(k));
+    location.reload();
+  }
+});
+// init valores guardados
+ptsGan.value=reglas.gan; ptsGol.value=reglas.gol; ptsDif.value=reglas.dif; segRonda.checked=reglas.seg;
+render();
+</script>
+</body>
+</html>
