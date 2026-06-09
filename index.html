@@ -240,7 +240,7 @@ function load(k,def){try{const v=JSON.parse(localStorage.getItem(k));return v??d
 function save(k,v){localStorage.setItem(k,JSON.stringify(v));}
 const cfg = load('polla_cfg',{valor:1,top:1,edad:1,confed:1,localia:1,publico:1,altitud:1,calor:1,husos:1});
 const reglas = load('polla_reglas',{gan:5,gol:2,dif:1,seg:false});
-let ODDS = load('polla_odds',{"México|Sudáfrica":[1.45,5.5,8.0]});
+let ODDS = load('polla_odds',{});  // MODO MODELO PURO: sin cuotas por defecto
 let RES  = load('polla_res',{});
 
 /* ====================== MATEMÁTICA ====================== */
@@ -343,7 +343,7 @@ function render(){
 
   const fix=[...FIX].sort((a,b)=>parseInt(a[1])-parseInt(b[1]));
   const tbody=document.querySelector('#tabla tbody'); tbody.innerHTML='';
-  let totalEP=0, totalReal=0, brier=0, nval=0, signoOK=0;
+  let totalEP=0, totalReal=0, brier=0, nval=0, signoOK=0, incN=0,incAc=0,incPts=0,clrN=0,clrAc=0,clrPts=0;
   let diaPrev='';
   for(const fx of fix){
     const [gr,dia,loc,vis,ciu,pais]=fx;
@@ -351,14 +351,16 @@ function render(){
     const mp=maxProb(r.p1,r.p2,r.px);
     let cls='', tag='';
     if(r.ep>=5.4){cls='seguro';tag='<span class="tag t-seg">SEGURO</span>';}
-    else if(mp<0.45){cls='incierto';tag='<span class="tag t-inc">INCIERTO</span>';}
+    else if(mp<0.50){cls='incierto';tag='<span class="tag t-inc">INCIERTO</span>';}
     const w1=Math.round(r.p1*100),wx=Math.round(r.px*100),w2=Math.round(r.p2*100);
     const key=loc+"|"+vis;
     const oc=ODDS[key]||["","",""];
     const res=RES[key];
     let ptsCell='—';
     if(res){const pr=puntosReales(r.a,r.b,res[0],res[1]); ptsCell='<b class="pts-cell">'+pr+'</b>';
-      totalReal+=pr; nval++; if(s3(r.a,r.b)===s3(res[0],res[1]))signoOK++;
+      totalReal+=pr; nval++;
+      const okSig=s3(r.a,r.b)===s3(res[0],res[1]); if(okSig)signoOK++;
+      if(mp<0.50){incN++; if(okSig)incAc++; incPts+=pr;} else {clrN++; if(okSig)clrAc++; clrPts+=pr;}
       const out=[res[0]>res[1]?1:0,res[0]===res[1]?1:0,res[0]<res[1]?1:0];
       brier+=(r.p1-out[0])**2+(r.px-out[1])**2+(r.p2-out[2])**2;}
     const tr=document.createElement('tr'); tr.className=cls;
@@ -392,7 +394,10 @@ function render(){
     validPanel.innerHTML=`Validados <b>${nval}</b> · acierto de signo <b>${Math.round(signoOK/nval*100)}%</b> · `+
       `goles/partido predichos <b>${(tp/nval).toFixed(2)}</b> vs reales <b>${(tr/nval).toFixed(2)}</b> · `+
       `empates esperados <b>${Math.round(dp/nval*100)}%</b> vs reales <b>${Math.round(dr/nval*100)}%</b>`+
-      ( Math.abs(tr/nval-tp/nval)>=0.25 ? ` — <span class="pill">sugerencia: ${tr>tp?'subir':'bajar'} GOLES_BASE</span>`:'' );
+      ( Math.abs(tr/nval-tp/nval)>=0.25 ? ` — <span class="pill">sugerencia: ${tr>tp?'subir':'bajar'} GOLES_BASE</span>`:'' )+
+      `<br>🔴 Inciertos (fav&lt;50%): <b>${incN?incN+' part · '+Math.round(incAc/incN*100)+'% signo · '+(incPts/incN).toFixed(2)+' pts':'—'}</b>`+
+      ` &nbsp;&nbsp; 🟢 Claros: <b>${clrN?clrN+' part · '+Math.round(clrAc/clrN*100)+'% signo · '+(clrPts/clrN).toFixed(2)+' pts':'—'}</b>`+
+      ( incN>=3 && incAc/incN<0.40 ? ` <span class="pill">el modelo flojea en inciertos → mete cuotas ahí</span>`:'' );
   } else validPanel.innerHTML='Ingresa resultados reales (activa "Mostrar resultados") para validar el modelo.';
   attachInputs();
   applyColViz();
