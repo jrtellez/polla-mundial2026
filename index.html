@@ -90,6 +90,7 @@
       <label class="chip"><input type="checkbox" data-cfg="top" checked> Jugadores top</label>
       <label class="chip"><input type="checkbox" data-cfg="edad" checked> Edad/experiencia</label>
       <label class="chip"><input type="checkbox" data-cfg="confed" checked> Confederación</label>
+      <label class="chip"><input type="checkbox" data-cfg="forma" checked> Forma reciente</label>
       <label class="chip"><input type="checkbox" data-cfg="localia" checked> Localía anfitriona</label>
       <label class="chip"><input type="checkbox" data-cfg="publico" checked> Público / diáspora</label>
       <label class="chip"><input type="checkbox" data-cfg="altitud" checked> Altitud</label>
@@ -147,7 +148,8 @@ const P = {
   CONF_ADJ:{UEFA:0,CONMEBOL:0,CONCACAF:-8,CAF:-10,AFC:-15,OFC:-25},
   HOME_ADV:70, ALT_UMBRAL:1000, ALT_K:4.0, CALOR_PENAL:18,
   HUSO_K:2.0, HUSO_F1:0.3, HUSO_MAX:12,
-  APOYO_MAX:35, LATINO_BONUS_MX:0.25, AFIN_DEF:0.40
+  APOYO_MAX:35, LATINO_BONUS_MX:0.25, AFIN_DEF:0.40,
+  FORMA_K:35, FORMA_MAX:28, FORMA_DECAY:0.8
 };
 const ALTITUD_OK=new Set(["México","Colombia","Ecuador","Bolivia","Perú"]);
 const CLIMA_FRIO=new Set(["Noruega","Suecia","Inglaterra","Escocia","Países Bajos","Alemania","Bélgica","Suiza","Austria","Croacia","Chequia","Bosnia","Canadá","Dinamarca","Irlanda"]);
@@ -235,10 +237,24 @@ const FIX = [
  ["L","17 jun","Ghana","Panamá","Toronto","Canadá",76,false,-4]
 ];
 
+/* ============ FORMA RECIENTE (residuo real-esperado, ajustada por rival) ============
+   Se nutre de FORMA_PRE (amistosos) y, automáticamente, de RES (resultados del
+   Mundial) fecha por fecha. Cada entrada: [rival, goles_favor, goles_contra]. */
+const ELO_RIVAL={"Chile":1808,"Eslovenia":1690,"Irlanda del Norte":1640,"Irlanda":1700,"Honduras":1600,"Bolivia":1545,"Guatemala":1500,"Eslovaquia":1700};
+const FORMA_PRE={
+ "Colombia":[["Jordania",2,0]],"Países Bajos":[["Uzbekistán",2,1]],"Uzbekistán":[["Países Bajos",1,2]],
+ "Francia":[["Irlanda del Norte",3,1]],"Croacia":[["Eslovenia",2,1]],"Marruecos":[["Noruega",1,1]],
+ "Noruega":[["Marruecos",1,1]],"Ecuador":[["Guatemala",3,0]],"Argentina":[["Honduras",2,0]],
+ "Bélgica":[["Túnez",5,0]],"Túnez":[["Bélgica",0,5]],"Inglaterra":[["Nueva Zelanda",1,0]],
+ "Nueva Zelanda":[["Inglaterra",0,1]],"Escocia":[["Bolivia",4,0]],"Estados Unidos":[["Alemania",1,2]],
+ "Alemania":[["Estados Unidos",2,1]],"Australia":[["Suiza",1,1]],"Suiza":[["Australia",1,1]],
+ "Brasil":[["Egipto",2,1]],"Egipto":[["Brasil",1,2]],"Portugal":[["Chile",2,1]],"Jordania":[["Colombia",0,2]]
+};
+
 /* ====================== ESTADO (con persistencia) ====================== */
 function load(k,def){try{const v=JSON.parse(localStorage.getItem(k));return v??def;}catch(e){return def;}}
 function save(k,v){localStorage.setItem(k,JSON.stringify(v));}
-const cfg = load('polla_cfg',{valor:1,top:1,edad:1,confed:1,localia:1,publico:1,altitud:1,calor:1,husos:1});
+const cfg = load('polla_cfg',{valor:1,top:1,edad:1,confed:1,forma:1,localia:1,publico:1,altitud:1,calor:1,husos:1});
 const reglas = load('polla_reglas',{gan:5,gol:2,dif:1,seg:false});
 let ODDS = load('polla_odds',{});  // MODO MODELO PURO: sin cuotas por defecto
 let RES  = load('polla_res',{});
@@ -265,6 +281,24 @@ function habilidadBase(t){
   if(cfg.confed) base+=(P.CONF_ADJ[d.conf]||0);
   return base;
 }
+function eloDe(t){return (t in E)?E[t].elo:(ELO_RIVAL[t]??1600);}
+function fechaDe(loc,vis){for(const f of FIX){if(f[2]===loc&&f[3]===vis){const d=parseInt(f[1]);return d<=17?1:(d<=23?2:3);}}return null;}
+function partidosForma(t,fecha){
+  const ms=(FORMA_PRE[t]||[]).map(x=>[x[0],x[1],x[2]]);
+  for(const k in RES){const p=k.split("|"),lk=p[0],vk=p[1],f=fechaDe(lk,vk);
+    if(f==null||(fecha!=null&&f>=fecha))continue;
+    const r=RES[k]; if(t===lk)ms.push([vk,r[0],r[1]]); else if(t===vk)ms.push([lk,r[1],r[0]]);}
+  return ms;
+}
+function formaDelta(t,fecha){
+  if(!cfg.forma) return 0;
+  const ms=partidosForma(t,fecha); if(!ms.length) return 0;
+  const eloT=E[t].elo, n=ms.length; let num=0,den=0;
+  ms.forEach((m,i)=>{const er=eloDe(m[0]),esp=(eloT-er)/P.ELO_POR_GOL,res=(m[1]-m[2])-esp;
+    const w=(er/1750)*Math.pow(P.FORMA_DECAY,n-1-i); num+=w*res; den+=w;});
+  if(den===0) return 0;
+  return Math.max(-P.FORMA_MAX,Math.min(P.FORMA_MAX,P.FORMA_K*(num/den)*(n/(n+2))));
+}
 function afinEf(t,pais){let a=E[t].afin??P.AFIN_DEF; if(pais==="México"&&LATINO.has(t))a+=P.LATINO_BONUS_MX; return Math.min(1,a);}
 function leanPublico(loc,vis,pais){
   if(!cfg.publico) return [0,null];
@@ -277,6 +311,7 @@ function leanPublico(loc,vis,pais){
 function habEnPartido(t,fx,esLocal){
   const [,,loc,vis,ciu,pais,alt,calor,tzs]=fx;
   let e=habilidadBase(t); const notas=[];
+  const fd=formaDelta(t,fechaDe(loc,vis)); if(fd){e+=fd; if(Math.abs(fd)>=4)notas.push("forma"+(fd>0?"+":"")+Math.round(fd));}
   if(cfg.localia && esLocal && ANFITRIONAS.has(t) && pais===t){e+=P.HOME_ADV; notas.push("local");}
   if(cfg.altitud && alt>P.ALT_UMBRAL && !ALTITUD_OK.has(t)){e-=(alt-P.ALT_UMBRAL)/100*P.ALT_K; notas.push("altura-"+alt+"m");}
   if(cfg.calor && calor && CLIMA_FRIO.has(t)){e-=P.CALOR_PENAL; notas.push("calor");}
