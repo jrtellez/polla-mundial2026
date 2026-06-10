@@ -149,7 +149,7 @@ const P = {
   HOME_ADV:70, ALT_UMBRAL:1000, ALT_K:4.0, CALOR_PENAL:18,
   HUSO_K:2.0, HUSO_F1:0.3, HUSO_MAX:12,
   APOYO_MAX:35, LATINO_BONUS_MX:0.25, AFIN_DEF:0.40,
-  FORMA_K:35, FORMA_MAX:28, FORMA_DECAY:0.8
+  FORMA_K:35, FORMA_MAX:30, FORMA_DECAY:0.82, COMP_PESO:{ofi:1.0,clf:1.0,ami:0.6}, PESO_XG:0.6
 };
 const ALTITUD_OK=new Set(["México","Colombia","Ecuador","Bolivia","Perú"]);
 const CLIMA_FRIO=new Set(["Noruega","Suecia","Inglaterra","Escocia","Países Bajos","Alemania","Bélgica","Suiza","Austria","Croacia","Chequia","Bosnia","Canadá","Dinamarca","Irlanda"]);
@@ -240,15 +240,22 @@ const FIX = [
 /* ============ FORMA RECIENTE (residuo real-esperado, ajustada por rival) ============
    Se nutre de FORMA_PRE (amistosos) y, automáticamente, de RES (resultados del
    Mundial) fecha por fecha. Cada entrada: [rival, goles_favor, goles_contra]. */
-const ELO_RIVAL={"Chile":1808,"Eslovenia":1690,"Irlanda del Norte":1640,"Irlanda":1700,"Honduras":1600,"Bolivia":1545,"Guatemala":1500,"Eslovaquia":1700};
+const ELO_RIVAL={"Chile":1808,"Eslovenia":1690,"Irlanda del Norte":1640,"Irlanda":1700,"Honduras":1600,"Bolivia":1545,"Guatemala":1500,"Eslovaquia":1700,"Bulgaria":1550,"Ucrania":1820,"Serbia":1820,"Andorra":1300};
 const FORMA_PRE={
- "Colombia":[["Jordania",2,0]],"Países Bajos":[["Uzbekistán",2,1]],"Uzbekistán":[["Países Bajos",1,2]],
- "Francia":[["Irlanda del Norte",3,1]],"Croacia":[["Eslovenia",2,1]],"Marruecos":[["Noruega",1,1]],
- "Noruega":[["Marruecos",1,1]],"Ecuador":[["Guatemala",3,0]],"Argentina":[["Honduras",2,0]],
- "Bélgica":[["Túnez",5,0]],"Túnez":[["Bélgica",0,5]],"Inglaterra":[["Nueva Zelanda",1,0]],
- "Nueva Zelanda":[["Inglaterra",0,1]],"Escocia":[["Bolivia",4,0]],"Estados Unidos":[["Alemania",1,2]],
- "Alemania":[["Estados Unidos",2,1]],"Australia":[["Suiza",1,1]],"Suiza":[["Australia",1,1]],
- "Brasil":[["Egipto",2,1]],"Egipto":[["Brasil",1,2]],"Portugal":[["Chile",2,1]],"Jordania":[["Colombia",0,2]]
+ "España":[{riv:"Bulgaria",gf:3,ga:0,comp:"clf"},{riv:"Turquía",gf:2,ga:2,comp:"clf"},{riv:"Turquía",gf:6,ga:0,comp:"clf"}],
+ "Inglaterra":[{riv:"Andorra",gf:2,ga:0,comp:"clf"},{riv:"Serbia",gf:2,ga:0,comp:"clf"},{riv:"Nueva Zelanda",gf:1,ga:0,comp:"ami"}],
+ "Alemania":[{riv:"Irlanda del Norte",gf:3,ga:1,comp:"clf"},{riv:"Estados Unidos",gf:2,ga:1,comp:"ami"}],
+ "Francia":[{riv:"Ucrania",gf:2,ga:0,comp:"clf"},{riv:"Irlanda del Norte",gf:3,ga:1,comp:"ami"}],
+ "Colombia":[{riv:"Jordania",gf:2,ga:0,comp:"ami"}],"Países Bajos":[{riv:"Uzbekistán",gf:2,ga:1,comp:"ami"}],
+ "Uzbekistán":[{riv:"Países Bajos",gf:1,ga:2,comp:"ami"}],"Croacia":[{riv:"Eslovenia",gf:2,ga:1,comp:"ami"}],
+ "Marruecos":[{riv:"Noruega",gf:1,ga:1,comp:"ami"}],"Noruega":[{riv:"Marruecos",gf:1,ga:1,comp:"ami"}],
+ "Ecuador":[{riv:"Guatemala",gf:3,ga:0,comp:"ami"}],"Argentina":[{riv:"Honduras",gf:2,ga:0,comp:"ami"}],
+ "Bélgica":[{riv:"Túnez",gf:5,ga:0,comp:"ami"}],"Túnez":[{riv:"Bélgica",gf:0,ga:5,comp:"ami"}],
+ "Estados Unidos":[{riv:"Alemania",gf:1,ga:2,comp:"ami"}],"Nueva Zelanda":[{riv:"Inglaterra",gf:0,ga:1,comp:"ami"}],
+ "Escocia":[{riv:"Bolivia",gf:4,ga:0,comp:"ami"}],"Australia":[{riv:"Suiza",gf:1,ga:1,comp:"ami"}],
+ "Suiza":[{riv:"Australia",gf:1,ga:1,comp:"ami"}],"Brasil":[{riv:"Egipto",gf:2,ga:1,comp:"ami"}],
+ "Egipto":[{riv:"Brasil",gf:1,ga:2,comp:"ami"}],"Portugal":[{riv:"Chile",gf:2,ga:1,comp:"ami"}],
+ "Jordania":[{riv:"Colombia",gf:0,ga:2,comp:"ami"}]
 };
 
 /* ====================== ESTADO (con persistencia) ====================== */
@@ -284,20 +291,25 @@ function habilidadBase(t){
 function eloDe(t){return (t in E)?E[t].elo:(ELO_RIVAL[t]??1600);}
 function fechaDe(loc,vis){for(const f of FIX){if(f[2]===loc&&f[3]===vis){const d=parseInt(f[1]);return d<=17?1:(d<=23?2:3);}}return null;}
 function partidosForma(t,fecha){
-  const ms=(FORMA_PRE[t]||[]).map(x=>[x[0],x[1],x[2]]);
+  const ms=(FORMA_PRE[t]||[]).slice();
   for(const k in RES){const p=k.split("|"),lk=p[0],vk=p[1],f=fechaDe(lk,vk);
     if(f==null||(fecha!=null&&f>=fecha))continue;
-    const r=RES[k]; if(t===lk)ms.push([vk,r[0],r[1]]); else if(t===vk)ms.push([lk,r[1],r[0]]);}
+    const r=RES[k]; if(t===lk)ms.push({riv:vk,gf:r[0],ga:r[1],comp:"ofi"}); else if(t===vk)ms.push({riv:lk,gf:r[1],ga:r[0],comp:"ofi"});}
   return ms;
+}
+function residuoPartido(eloT,m){
+  const er=eloDe(m.riv),esp=(eloT-er)/P.ELO_POR_GOL,rg=(m.gf-m.ga)-esp;
+  if(m.xg!=null&&m.xga!=null){const rx=(m.xg-m.xga)-esp; return (1-P.PESO_XG)*rg+P.PESO_XG*rx;}
+  return rg;
 }
 function formaDelta(t,fecha){
   if(!cfg.forma) return 0;
   const ms=partidosForma(t,fecha); if(!ms.length) return 0;
   const eloT=E[t].elo, n=ms.length; let num=0,den=0;
-  ms.forEach((m,i)=>{const er=eloDe(m[0]),esp=(eloT-er)/P.ELO_POR_GOL,res=(m[1]-m[2])-esp;
-    const w=(er/1750)*Math.pow(P.FORMA_DECAY,n-1-i); num+=w*res; den+=w;});
+  ms.forEach((m,i)=>{const er=eloDe(m.riv),w=(er/1750)*Math.pow(P.FORMA_DECAY,n-1-i)*(P.COMP_PESO[m.comp]??0.6);
+    num+=w*residuoPartido(eloT,m); den+=w;});
   if(den===0) return 0;
-  return Math.max(-P.FORMA_MAX,Math.min(P.FORMA_MAX,P.FORMA_K*(num/den)*(n/(n+2))));
+  return Math.max(-P.FORMA_MAX,Math.min(P.FORMA_MAX,P.FORMA_K*(num/den)*(n/(n+3))));
 }
 function afinEf(t,pais){let a=E[t].afin??P.AFIN_DEF; if(pais==="México"&&LATINO.has(t))a+=P.LATINO_BONUS_MX; return Math.min(1,a);}
 function leanPublico(loc,vis,pais){
