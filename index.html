@@ -240,21 +240,34 @@ const FIX = [
 /* ============ FORMA RECIENTE (residuo real-esperado, ajustada por rival) ============
    Se nutre de FORMA_PRE (amistosos) y, automáticamente, de RES (resultados del
    Mundial) fecha por fecha. Cada entrada: [rival, goles_favor, goles_contra]. */
-const ELO_RIVAL={"Chile":1808,"Eslovenia":1690,"Irlanda del Norte":1640,"Irlanda":1700,"Honduras":1600,"Bolivia":1545,"Guatemala":1500,"Eslovaquia":1700,"Bulgaria":1550,"Ucrania":1820,"Serbia":1820,"Andorra":1300};
+const ELO_RIVAL={"Chile":1808,"Eslovenia":1690,"Irlanda del Norte":1640,"Irlanda":1700,"Honduras":1600,"Bolivia":1545,"Guatemala":1500,"Eslovaquia":1700,"Bulgaria":1550,"Ucrania":1820,"Serbia":1820,"Andorra":1300,"Hong Kong":1230,"China":1540,"Indonesia":1380,"Polonia":1750,"Lituania":1400,"Finlandia":1620,"Malta":1050,"Gibraltar":1010,"San Marino":800,"Islas Feroe":1320,"Montenegro":1660,"Burkina Faso":1620,"Malawi":1350,"Liberia":1300,"Gales":1760,"Comoras":1320,"Rep. Centroafricana":1250,"El Salvador":1500,"Surinam":1450,"Jamaica":1620,"Gabón":1500,"Camerún":1750,"Mozambique":1350,"Venezuela":1760,"Macedonia del Norte":1650,"Kosovo":1560,"Rumania":1700,"Georgia":1610};
 const FORMA_PRE={
+ "Corea del Sur":[{riv:"Hong Kong",gf:2,ga:0,comp:"ofi"},{riv:"Japón",gf:0,ga:1,comp:"ofi"},{riv:"Estados Unidos",gf:2,ga:0,comp:"ami"},{riv:"México",gf:2,ga:2,comp:"ami"},{riv:"Brasil",gf:0,ga:5,comp:"ami"},{riv:"Paraguay",gf:2,ga:0,comp:"ami"},{riv:"Bolivia",gf:2,ga:0,comp:"ami"},{riv:"Ghana",gf:1,ga:0,comp:"ami"}],
+ "Chequia":[{riv:"Croacia",gf:1,ga:5,comp:"clf"},{riv:"Arabia Saudí",gf:1,ga:1,comp:"ami"},{riv:"Montenegro",gf:2,ga:0,comp:"clf"},{riv:"Croacia",gf:0,ga:0,comp:"clf"},{riv:"Islas Feroe",gf:1,ga:2,comp:"clf"},{riv:"San Marino",gf:1,ga:0,comp:"ami"},{riv:"Gibraltar",gf:6,ga:0,comp:"clf"}],
+ "Japón":[{riv:"China",gf:2,ga:0,comp:"ofi"},{riv:"Hong Kong",gf:6,ga:1,comp:"ofi"},{riv:"Indonesia",gf:6,ga:0,comp:"clf"},{riv:"Inglaterra",gf:1,ga:0,comp:"ami"}],
+ "Países Bajos":[{riv:"Finlandia",gf:2,ga:0,comp:"clf"},{riv:"Malta",gf:8,ga:0,comp:"clf"},{riv:"Lituania",gf:3,ga:2,comp:"clf"},{riv:"Polonia",gf:1,ga:1,comp:"clf"},{riv:"Malta",gf:4,ga:0,comp:"clf"},{riv:"Finlandia",gf:4,ga:0,comp:"clf"},{riv:"Lituania",gf:4,ga:0,comp:"clf"},{riv:"Polonia",gf:1,ga:1,comp:"clf"}],
+ "Suecia":[{riv:"Ucrania",gf:3,ga:1,comp:"clf"},{riv:"Polonia",gf:3,ga:2,comp:"clf"}],
+ "Túnez":[{riv:"Brasil",gf:0,ga:0,comp:"ami"},{riv:"Liberia",gf:1,ga:0,comp:"clf"},{riv:"Malawi",gf:2,ga:0,comp:"clf"},{riv:"Burkina Faso",gf:2,ga:0,comp:"ami"},{riv:"Marruecos",gf:0,ga:2,comp:"ami"},{riv:"Bélgica",gf:0,ga:5,comp:"ami"}],
+ "Ghana":[{riv:"Rep. Centroafricana",gf:5,ga:0,comp:"clf"},{riv:"Comoras",gf:1,ga:0,comp:"clf"},{riv:"Japón",gf:0,ga:2,comp:"ami"},{riv:"Corea del Sur",gf:0,ga:1,comp:"ami"},{riv:"Austria",gf:1,ga:5,comp:"ami"},{riv:"Alemania",gf:1,ga:2,comp:"ami"},{riv:"México",gf:0,ga:2,comp:"ami"},{riv:"Gales",gf:1,ga:1,comp:"ami"}],
+ "Panamá":[{riv:"Jamaica",gf:4,ga:1,comp:"ofi"},{riv:"Honduras",gf:1,ga:1,comp:"ofi"},{riv:"Surinam",gf:0,ga:0,comp:"clf"},{riv:"Guatemala",gf:1,ga:1,comp:"clf"},{riv:"El Salvador",gf:1,ga:0,comp:"clf"},{riv:"Surinam",gf:1,ga:1,comp:"clf"},{riv:"El Salvador",gf:3,ga:0,comp:"clf"},{riv:"Guatemala",gf:3,ga:2,comp:"clf"}],
+ "Costa de Marfil":[{riv:"Mozambique",gf:1,ga:0,comp:"ofi"},{riv:"Camerún",gf:1,ga:1,comp:"ofi"},{riv:"Gabón",gf:3,ga:2,comp:"ofi"},{riv:"Burkina Faso",gf:3,ga:0,comp:"ofi"},{riv:"Egipto",gf:2,ga:3,comp:"ofi"},{riv:"Corea del Sur",gf:4,ga:0,comp:"ami"},{riv:"Escocia",gf:1,ga:0,comp:"ami"},{riv:"Francia",gf:2,ga:1,comp:"ami"}],
+ "Ecuador":[{riv:"Estados Unidos",gf:1,ga:1,comp:"ami"},{riv:"México",gf:1,ga:1,comp:"ami"},{riv:"Canadá",gf:0,ga:0,comp:"ami"},{riv:"Nueva Zelanda",gf:2,ga:0,comp:"ami"},{riv:"Marruecos",gf:1,ga:1,comp:"ami"},{riv:"Países Bajos",gf:1,ga:1,comp:"ami"},{riv:"Guatemala",gf:3,ga:0,comp:"ami"},{riv:"Arabia Saudí",gf:2,ga:1,comp:"ami"}],
+ "Turquía":[{riv:"Bulgaria",gf:6,ga:1,comp:"clf"},{riv:"Georgia",gf:4,ga:1,comp:"clf"},{riv:"Bulgaria",gf:2,ga:0,comp:"clf"},{riv:"España",gf:2,ga:2,comp:"clf"},{riv:"Rumania",gf:1,ga:0,comp:"clf"},{riv:"Kosovo",gf:1,ga:0,comp:"clf"},{riv:"Macedonia del Norte",gf:4,ga:0,comp:"ami"},{riv:"Venezuela",gf:2,ga:1,comp:"ami"}],
  "España":[{riv:"Bulgaria",gf:3,ga:0,comp:"clf"},{riv:"Turquía",gf:2,ga:2,comp:"clf"},{riv:"Turquía",gf:6,ga:0,comp:"clf"}],
- "Inglaterra":[{riv:"Andorra",gf:2,ga:0,comp:"clf"},{riv:"Serbia",gf:2,ga:0,comp:"clf"},{riv:"Nueva Zelanda",gf:1,ga:0,comp:"ami"}],
- "Alemania":[{riv:"Irlanda del Norte",gf:3,ga:1,comp:"clf"},{riv:"Estados Unidos",gf:2,ga:1,comp:"ami"}],
- "Francia":[{riv:"Ucrania",gf:2,ga:0,comp:"clf"},{riv:"Irlanda del Norte",gf:3,ga:1,comp:"ami"}],
- "Colombia":[{riv:"Jordania",gf:2,ga:0,comp:"ami"}],"Países Bajos":[{riv:"Uzbekistán",gf:2,ga:1,comp:"ami"}],
- "Uzbekistán":[{riv:"Países Bajos",gf:1,ga:2,comp:"ami"}],"Croacia":[{riv:"Eslovenia",gf:2,ga:1,comp:"ami"}],
- "Marruecos":[{riv:"Noruega",gf:1,ga:1,comp:"ami"}],"Noruega":[{riv:"Marruecos",gf:1,ga:1,comp:"ami"}],
- "Ecuador":[{riv:"Guatemala",gf:3,ga:0,comp:"ami"}],"Argentina":[{riv:"Honduras",gf:2,ga:0,comp:"ami"}],
- "Bélgica":[{riv:"Túnez",gf:5,ga:0,comp:"ami"}],"Túnez":[{riv:"Bélgica",gf:0,ga:5,comp:"ami"}],
- "Estados Unidos":[{riv:"Alemania",gf:1,ga:2,comp:"ami"}],"Nueva Zelanda":[{riv:"Inglaterra",gf:0,ga:1,comp:"ami"}],
- "Escocia":[{riv:"Bolivia",gf:4,ga:0,comp:"ami"}],"Australia":[{riv:"Suiza",gf:1,ga:1,comp:"ami"}],
- "Suiza":[{riv:"Australia",gf:1,ga:1,comp:"ami"}],"Brasil":[{riv:"Egipto",gf:2,ga:1,comp:"ami"}],
- "Egipto":[{riv:"Brasil",gf:1,ga:2,comp:"ami"}],"Portugal":[{riv:"Chile",gf:2,ga:1,comp:"ami"}],
+ "Inglaterra":[{riv:"Andorra",gf:2,ga:0,comp:"clf"},{riv:"Serbia",gf:2,ga:0,comp:"clf"},{riv:"Japón",gf:0,ga:1,comp:"ami"},{riv:"Nueva Zelanda",gf:1,ga:0,comp:"ami"}],
+ "Alemania":[{riv:"Irlanda del Norte",gf:3,ga:1,comp:"clf"},{riv:"Estados Unidos",gf:2,ga:1,comp:"ami"},{riv:"Ghana",gf:2,ga:1,comp:"ami"}],
+ "Francia":[{riv:"Ucrania",gf:2,ga:0,comp:"clf"},{riv:"Irlanda del Norte",gf:3,ga:1,comp:"ami"},{riv:"Costa de Marfil",gf:1,ga:2,comp:"ami"}],
+ "Croacia":[{riv:"Chequia",gf:5,ga:1,comp:"clf"},{riv:"Chequia",gf:0,ga:0,comp:"clf"},{riv:"Eslovenia",gf:2,ga:1,comp:"ami"}],
+ "Marruecos":[{riv:"Túnez",gf:2,ga:0,comp:"ami"},{riv:"Ecuador",gf:1,ga:1,comp:"ami"},{riv:"Noruega",gf:1,ga:1,comp:"ami"}],
+ "Estados Unidos":[{riv:"Alemania",gf:1,ga:2,comp:"ami"},{riv:"Corea del Sur",gf:0,ga:2,comp:"ami"},{riv:"Ecuador",gf:1,ga:1,comp:"ami"}],
+ "Brasil":[{riv:"Túnez",gf:0,ga:0,comp:"ami"},{riv:"Corea del Sur",gf:5,ga:0,comp:"ami"},{riv:"Egipto",gf:2,ga:1,comp:"ami"}],
+ "Egipto":[{riv:"Costa de Marfil",gf:3,ga:2,comp:"ofi"},{riv:"Brasil",gf:1,ga:2,comp:"ami"}],
+ "Nueva Zelanda":[{riv:"Inglaterra",gf:0,ga:1,comp:"ami"},{riv:"Ecuador",gf:0,ga:2,comp:"ami"}],
+ "Escocia":[{riv:"Bolivia",gf:4,ga:0,comp:"ami"},{riv:"Costa de Marfil",gf:0,ga:1,comp:"ami"}],
+ "Colombia":[{riv:"Jordania",gf:2,ga:0,comp:"ami"}],"Uzbekistán":[{riv:"Países Bajos",gf:1,ga:2,comp:"ami"}],
+ "Noruega":[{riv:"Marruecos",gf:1,ga:1,comp:"ami"}],"Argentina":[{riv:"Honduras",gf:2,ga:0,comp:"ami"}],
+ "Bélgica":[{riv:"Túnez",gf:5,ga:0,comp:"ami"}],"Australia":[{riv:"Suiza",gf:1,ga:1,comp:"ami"}],
+ "Suiza":[{riv:"Australia",gf:1,ga:1,comp:"ami"}],"Portugal":[{riv:"Chile",gf:2,ga:1,comp:"ami"}],
  "Jordania":[{riv:"Colombia",gf:0,ga:2,comp:"ami"}]
 };
 
