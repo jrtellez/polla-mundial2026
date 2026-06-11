@@ -271,13 +271,17 @@ const FORMA_PRE={
  "Jordania":[{riv:"Colombia",gf:0,ga:2,comp:"ami"}]
 };
 
+/* Resultados REALES del Mundial (se añaden por fecha) + su xG (alimentan forma + validación) */
+const RESULTADOS_WC={"México|Sudáfrica":[2,0]};
+const RES_STATS_WC={"México|Sudáfrica":{xg_l:1.41,xg_v:0.07}};
+
 /* ====================== ESTADO (con persistencia) ====================== */
 function load(k,def){try{const v=JSON.parse(localStorage.getItem(k));return v??def;}catch(e){return def;}}
 function save(k,v){localStorage.setItem(k,JSON.stringify(v));}
 const cfg = load('polla_cfg',{valor:1,top:1,edad:1,confed:1,forma:1,localia:1,publico:1,altitud:1,calor:1,husos:1});
 const reglas = load('polla_reglas',{gan:5,gol:2,dif:1,seg:false});
 let ODDS = load('polla_odds',{});  // MODO MODELO PURO: sin cuotas por defecto
-let RES  = load('polla_res',{});
+let RES  = Object.assign({}, RESULTADOS_WC, load('polla_res',{}));  // resultados del Mundial + los que tú entres
 
 /* ====================== MATEMÁTICA ====================== */
 function fact(n){let r=1;for(let i=2;i<=n;i++)r*=i;return r;}
@@ -307,7 +311,9 @@ function partidosForma(t,fecha){
   const ms=(FORMA_PRE[t]||[]).slice();
   for(const k in RES){const p=k.split("|"),lk=p[0],vk=p[1],f=fechaDe(lk,vk);
     if(f==null||(fecha!=null&&f>=fecha))continue;
-    const r=RES[k]; if(t===lk)ms.push({riv:vk,gf:r[0],ga:r[1],comp:"ofi"}); else if(t===vk)ms.push({riv:lk,gf:r[1],ga:r[0],comp:"ofi"});}
+    const r=RES[k],st=RES_STATS_WC[k]||{};
+    if(t===lk){const m={riv:vk,gf:r[0],ga:r[1],comp:"ofi"}; if(st.xg_l!=null){m.xg=st.xg_l;m.xga=st.xg_v;} ms.push(m);}
+    else if(t===vk){const m={riv:lk,gf:r[1],ga:r[0],comp:"ofi"}; if(st.xg_l!=null){m.xg=st.xg_v;m.xga=st.xg_l;} ms.push(m);}}
   return ms;
 }
 function residuoPartido(eloT,m){
