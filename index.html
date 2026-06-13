@@ -272,8 +272,8 @@ const FORMA_PRE={
 };
 
 /* Resultados REALES del Mundial (se añaden por fecha) + su xG (alimentan forma + validación) */
-const RESULTADOS_WC={"México|Sudáfrica":[2,0]};
-const RES_STATS_WC={"México|Sudáfrica":{xg_l:1.41,xg_v:0.07}};
+const RESULTADOS_WC={"México|Sudáfrica":[2,0],"Corea del Sur|Chequia":[2,1],"Estados Unidos|Paraguay":[4,1],"Canadá|Bosnia":[1,1]};
+const RES_STATS_WC={"México|Sudáfrica":{xg_l:1.41,xg_v:0.07},"Corea del Sur|Chequia":{xg_l:1.84,xg_v:0.81},"Estados Unidos|Paraguay":{xg_l:1.35,xg_v:0.47},"Canadá|Bosnia":{xg_l:0.70,xg_v:0.96}};
 
 /* ====================== ESTADO (con persistencia) ====================== */
 function load(k,def){try{const v=JSON.parse(localStorage.getItem(k));return v??def;}catch(e){return def;}}
