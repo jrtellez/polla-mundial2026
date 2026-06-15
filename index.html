@@ -143,7 +143,7 @@
 <script>
 /* ====================== PARÁMETROS DEL MODELO ====================== */
 const P = {
-  GOLES_BASE:2.45, ELO_POR_GOL:200, EXTRA_TOT_MISMATCH:0.10, MAX_GOLES:8,
+  GOLES_BASE:2.65, ELO_POR_GOL:200, EXTRA_TOT_MISMATCH:0.10, MAX_GOLES:8,
   PESO_VALOR:0.25, TOP_POR_JUGADOR:4.0, EDAD_PICO:27, EDAD_K:1.2,
   CONF_ADJ:{UEFA:0,CONMEBOL:0,CONCACAF:-8,CAF:-10,AFC:-15,OFC:-25},
   HOME_ADV:70, ALT_UMBRAL:1000, ALT_K:4.0, CALOR_PENAL:18,
@@ -272,7 +272,7 @@ const FORMA_PRE={
 };
 
 /* Resultados REALES del Mundial (se añaden por fecha) + su xG (alimentan forma + validación) */
-const RESULTADOS_WC={"México|Sudáfrica":[2,0],"Corea del Sur|Chequia":[2,1],"Estados Unidos|Paraguay":[4,1],"Canadá|Bosnia":[1,1]};
+const RESULTADOS_WC={"México|Sudáfrica":[2,0],"Corea del Sur|Chequia":[2,1],"Estados Unidos|Paraguay":[4,1],"Canadá|Bosnia":[1,1],"Catar|Suiza":[1,1],"Brasil|Marruecos":[1,1],"Haití|Escocia":[0,1],"Australia|Turquía":[0,2],"Alemania|Curazao":[7,1],"Costa de Marfil|Ecuador":[1,0],"Países Bajos|Japón":[2,2]};
 const RES_STATS_WC={"México|Sudáfrica":{xg_l:1.41,xg_v:0.07},"Corea del Sur|Chequia":{xg_l:1.84,xg_v:0.81},"Estados Unidos|Paraguay":{xg_l:1.35,xg_v:0.47},"Canadá|Bosnia":{xg_l:0.70,xg_v:0.96}};
 
 /* ====================== ESTADO (con persistencia) ====================== */
