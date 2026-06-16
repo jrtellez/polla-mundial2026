@@ -296,8 +296,8 @@ const FORMA_PRE={
 };
 
 /* Resultados REALES del Mundial (se añaden por fecha) + su xG (alimentan forma + validación) */
-const RESULTADOS_WC={"México|Sudáfrica":[2,0],"Corea del Sur|Chequia":[2,1],"Estados Unidos|Paraguay":[4,1],"Canadá|Bosnia":[1,1],"Catar|Suiza":[1,1],"Brasil|Marruecos":[1,1],"Haití|Escocia":[0,1],"Australia|Turquía":[0,2],"Alemania|Curazao":[7,1],"Costa de Marfil|Ecuador":[1,0],"Países Bajos|Japón":[2,2],"España|Cabo Verde":[0,0],"Arabia Saudí|Uruguay":[1,1],"Bélgica|Egipto":[1,1]};
-const RES_STATS_WC={"México|Sudáfrica":{xg_l:1.41,xg_v:0.07},"Corea del Sur|Chequia":{xg_l:1.84,xg_v:0.81},"Estados Unidos|Paraguay":{xg_l:1.35,xg_v:0.47},"Canadá|Bosnia":{xg_l:0.70,xg_v:0.96},"España|Cabo Verde":{xg_l:2.60,xg_v:0.40},"Arabia Saudí|Uruguay":{xg_l:0.99,xg_v:1.58}};
+const RESULTADOS_WC={"México|Sudáfrica":[2,0],"Corea del Sur|Chequia":[2,1],"Estados Unidos|Paraguay":[4,1],"Canadá|Bosnia":[1,1],"Catar|Suiza":[1,1],"Brasil|Marruecos":[1,1],"Haití|Escocia":[0,1],"Australia|Turquía":[0,2],"Alemania|Curazao":[7,1],"Costa de Marfil|Ecuador":[1,0],"Países Bajos|Japón":[2,2],"España|Cabo Verde":[0,0],"Arabia Saudí|Uruguay":[1,1],"Bélgica|Egipto":[1,1],"Irán|Nueva Zelanda":[2,2]};
+const RES_STATS_WC={"México|Sudáfrica":{xg_l:1.41,xg_v:0.07},"Corea del Sur|Chequia":{xg_l:1.84,xg_v:0.81},"Estados Unidos|Paraguay":{xg_l:1.35,xg_v:0.47},"Canadá|Bosnia":{xg_l:0.70,xg_v:0.96},"España|Cabo Verde":{xg_l:2.60,xg_v:0.40},"Arabia Saudí|Uruguay":{xg_l:0.99,xg_v:1.58},"Brasil|Marruecos":{xg_l:1.23,xg_v:1.53},"Alemania|Curazao":{xg_l:3.91,xg_v:0.40},"Costa de Marfil|Ecuador":{xg_l:1.68,xg_v:1.03}};
 
 /* ====================== ESTADO (con persistencia) ====================== */
 function load(k,def){try{const v=JSON.parse(localStorage.getItem(k));return v??def;}catch(e){return def;}}
