@@ -258,7 +258,31 @@ const FIX = [
  ["K","23 jun","Portugal","Uzbekistán","Houston","Estados Unidos",15,false,-5],
  ["K","23 jun","Colombia","RD Congo","Guadalajara","México",1560,false,-6],
  ["L","23 jun","Inglaterra","Ghana","Foxborough","Estados Unidos",46,false,-4],
- ["L","23 jun","Panamá","Croacia","Toronto","Canadá",76,false,-4]
+ ["L","23 jun","Panamá","Croacia","Toronto","Canadá",76,false,-4],
+ ["A","24 jun","Chequia","México","Ciudad de México","México",2240,false,-6],
+ ["A","24 jun","Sudáfrica","Corea del Sur","Monterrey","México",540,true,-6],
+ ["B","24 jun","Suiza","Canadá","Vancouver","Canadá",3,false,-7],
+ ["B","24 jun","Bosnia","Catar","Seattle","Estados Unidos",34,false,-7],
+ ["C","24 jun","Escocia","Brasil","Miami","Estados Unidos",2,true,-4],
+ ["C","24 jun","Marruecos","Haití","Atlanta","Estados Unidos",320,false,-4],
+ ["D","25 jun","Turquía","Estados Unidos","Inglewood","Estados Unidos",30,false,-7],
+ ["D","25 jun","Paraguay","Australia","Santa Clara","Estados Unidos",12,false,-7],
+ ["E","25 jun","Curazao","Costa de Marfil","Filadelfia","Estados Unidos",12,true,-4],
+ ["E","25 jun","Ecuador","Alemania","Nueva Jersey","Estados Unidos",7,false,-4],
+ ["F","25 jun","Japón","Suecia","Arlington","Estados Unidos",150,false,-5],
+ ["F","25 jun","Túnez","Países Bajos","Kansas City","Estados Unidos",271,true,-5],
+ ["G","26 jun","Egipto","Irán","Seattle","Estados Unidos",34,false,-7],
+ ["G","26 jun","Nueva Zelanda","Bélgica","Vancouver","Canadá",3,false,-7],
+ ["H","26 jun","Cabo Verde","Arabia Saudí","Houston","Estados Unidos",15,false,-5],
+ ["H","26 jun","Uruguay","España","Guadalajara","México",1560,false,-6],
+ ["I","26 jun","Noruega","Francia","Foxborough","Estados Unidos",46,false,-4],
+ ["I","26 jun","Senegal","Irak","Toronto","Canadá",76,false,-4],
+ ["J","27 jun","Argelia","Austria","Kansas City","Estados Unidos",271,true,-5],
+ ["J","27 jun","Jordania","Argentina","Arlington","Estados Unidos",150,false,-5],
+ ["K","27 jun","Colombia","Portugal","Miami","Estados Unidos",2,true,-4],
+ ["K","27 jun","RD Congo","Uzbekistán","Atlanta","Estados Unidos",320,false,-4],
+ ["L","27 jun","Panamá","Inglaterra","Nueva Jersey","Estados Unidos",7,false,-4],
+ ["L","27 jun","Croacia","Ghana","Filadelfia","Estados Unidos",12,true,-4]
 ];
 
 /* ============ FORMA RECIENTE (residuo real-esperado, ajustada por rival) ============
@@ -367,7 +391,7 @@ function habEnPartido(t,fx,esLocal){
   const [,,loc,vis,ciu,pais,alt,calor,tzs]=fx;
   let e=habilidadBase(t); const notas=[];
   const fd=formaDelta(t,fechaDe(loc,vis)); if(fd){e+=fd; if(Math.abs(fd)>=4)notas.push("forma"+(fd>0?"+":"")+Math.round(fd));}
-  if(cfg.localia && esLocal && ANFITRIONAS.has(t) && pais===t){e+=P.HOME_ADV; notas.push("local");}
+  if(cfg.localia && ANFITRIONAS.has(t) && pais===t){e+=P.HOME_ADV; notas.push("local");}
   if(cfg.altitud && alt>P.ALT_UMBRAL && !ALTITUD_OK.has(t)){e-=(alt-P.ALT_UMBRAL)/100*P.ALT_K; notas.push("altura-"+alt+"m");}
   if(cfg.calor && calor && CLIMA_FRIO.has(t)){e-=P.CALOR_PENAL; notas.push("calor");}
   if(cfg.husos){const h=Math.min(P.HUSO_MAX,Math.abs(E[t].tz-tzs)); if(h>0){e-=h*P.HUSO_K*P.HUSO_F1; if(h>=6)notas.push("jet-lag"+h+"h");}}
