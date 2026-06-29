@@ -143,7 +143,7 @@
 <script>
 /* ====================== PARÁMETROS DEL MODELO ====================== */
 const P = {
-  GOLES_BASE:2.85, ELO_POR_GOL:200, EXTRA_TOT_MISMATCH:0.10, MAX_GOLES:8,
+  GOLES_BASE:2.85, GOLES_BASE_KO:2.45, ELO_POR_GOL:200, EXTRA_TOT_MISMATCH:0.10, MAX_GOLES:8,
   PESO_VALOR:0.25, TOP_POR_JUGADOR:4.0, EDAD_PICO:27, EDAD_K:1.2,
   CONF_ADJ:{UEFA:0,CONMEBOL:0,CONCACAF:-8,CAF:-10,AFC:-15,OFC:-25},
   HOME_ADV:70, ALT_UMBRAL:1000, ALT_K:4.0, CALOR_PENAL:18,
@@ -402,7 +402,8 @@ function lambdas(fx){
   let [el,nl]=habEnPartido(loc,fx,true);
   let [ev,nv]=habEnPartido(vis,fx,false);
   const [L,np]=leanPublico(loc,vis,pais); el+=L; if(np)nl=nl.concat([np]);
-  const sup=(el-ev)/P.ELO_POR_GOL, tot=P.GOLES_BASE+P.EXTRA_TOT_MISMATCH*Math.abs(sup);
+  const baseG="ABCDEFGHIJKL".includes(fx[0])?P.GOLES_BASE:P.GOLES_BASE_KO;
+  const sup=(el-ev)/P.ELO_POR_GOL, tot=baseG+P.EXTRA_TOT_MISMATCH*Math.abs(sup);
   let ll=Math.max(0.12,(tot+sup)/2), lv=Math.max(0.12,(tot-sup)/2);
   const key=loc+"|"+vis;
   if(ODDS[key]){[ll,lv]=blendOdds(ll,lv,ODDS[key]); nl=nl.concat(["odds"]);}
